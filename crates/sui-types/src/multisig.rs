@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crate::{
+    committee::EpochId,
     crypto::{CompressedSignature, DefaultHash, SignatureScheme},
     signature::AuthenticatorTrait,
     sui_serde::SuiBitmap,
@@ -96,6 +97,7 @@ impl AuthenticatorTrait for MultiSig {
         &self,
         value: &IntentMessage<T>,
         author: SuiAddress,
+        _epoch: Option<EpochId>,
     ) -> Result<(), SuiError>
     where
         T: Serialize,

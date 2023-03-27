@@ -1,6 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
-
+use crate::committee::EpochId;
+use crate::openid_authenticator::OpenIdAuthenticator;
 use crate::{base_types::SuiAddress, crypto::Signature, error::SuiError, multisig::MultiSig};
 use crate::{
     crypto::{SignatureScheme, SuiSignature},
@@ -23,6 +24,7 @@ pub trait AuthenticatorTrait {
         &self,
         value: &IntentMessage<T>,
         author: SuiAddress,
+        epoch: Option<EpochId>,
     ) -> Result<(), SuiError>
     where
         T: Serialize;
@@ -34,9 +36,11 @@ pub trait AuthenticatorTrait {
 /// This way MultiSig (and future Authenticators) can implement its own `verify`.
 #[enum_dispatch(AuthenticatorTrait)]
 #[derive(Debug, Clone, PartialEq, Eq, JsonSchema, Hash)]
+#[allow(clippy::large_enum_variant)]
 pub enum GenericSignature {
     MultiSig,
     Signature,
+    OpenIdAuthenticator,
 }
 
 /// GenericSignature encodes a single signature [enum Signature] as is `flag || signature || pubkey`.
@@ -61,6 +65,12 @@ impl ToFromBytes for GenericSignature {
                     multisig.validate()?;
                     Ok(GenericSignature::MultiSig(multisig))
                 }
+                SignatureScheme::OpenIdAuthenticator => {
+                    let authenticator: OpenIdAuthenticator =
+                        bcs::from_bytes(bytes.get(1..).ok_or(FastCryptoError::InvalidInput)?)
+                            .map_err(|_| FastCryptoError::InvalidSignature)?;
+                    Ok(GenericSignature::OpenIdAuthenticator(authenticator))
+                }
                 _ => Err(FastCryptoError::InvalidInput),
             },
             Err(_) => Err(FastCryptoError::InvalidInput),
@@ -74,6 +84,7 @@ impl AsRef<[u8]> for GenericSignature {
         match self {
             GenericSignature::MultiSig(s) => s.as_ref(),
             GenericSignature::Signature(s) => s.as_ref(),
+            GenericSignature::OpenIdAuthenticator(s) => s.as_ref(),
         }
     }
 }
@@ -87,6 +98,7 @@ impl AuthenticatorTrait for Signature {
         &self,
         value: &IntentMessage<T>,
         author: SuiAddress,
+        _epoch: Option<EpochId>,
     ) -> Result<(), SuiError>
     where
         T: Serialize,

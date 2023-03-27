@@ -3,12 +3,17 @@
 use anyhow::anyhow;
 use bip32::DerivationPath;
 use clap::*;
+use fastcrypto::ed25519::Ed25519KeyPair;
 use fastcrypto::encoding::{decode_bytes_hex, Base64, Encoding};
 use fastcrypto::hash::HashFunction;
-use fastcrypto::traits::KeyPair;
+use fastcrypto::rsa::{Base64UrlUnpadded, Encoding as OtherEncoding};
+use fastcrypto::traits::{KeyPair, ToFromBytes};
+use rand::Rng;
 use shared_crypto::intent::{Intent, IntentMessage};
+use signature::rand_core::OsRng;
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::str::FromStr;
 use sui_keys::key_derive::generate_new_key;
 use sui_keys::keypair_file::{
     read_authority_keypair_from_file, read_keypair_from_file, write_authority_keypair_to_file,
@@ -16,10 +21,16 @@ use sui_keys::keypair_file::{
 };
 use sui_keys::keystore::{AccountKeystore, Keystore};
 use sui_types::base_types::SuiAddress;
-use sui_types::crypto::{get_authority_key_pair, EncodeDecodeBase64, SignatureScheme, SuiKeyPair};
+use sui_types::crypto::{
+    get_authority_key_pair, get_key_pair, EncodeDecodeBase64, SignatureScheme, SuiKeyPair,
+};
 use sui_types::crypto::{DefaultHash, PublicKey, Signature};
 use sui_types::messages::TransactionData;
 use sui_types::multisig::{MultiSig, MultiSigPublicKey, ThresholdUnit, WeightUnit};
+use sui_types::openid_authenticator::{MaskedContent, ProofPoints, PublicInputs};
+use sui_types::openid_authenticator::{
+    OAuthProviderContent, OpenIdAuthenticator, SerializedVerifyingKey,
+};
 use sui_types::signature::GenericSignature;
 use tracing::info;
 #[cfg(test)]
@@ -106,6 +117,36 @@ pub enum KeyToolCommand {
         weights: Vec<WeightUnit>,
         #[clap(long)]
         threshold: ThresholdUnit,
+    },
+
+    LogInFlow {
+        #[clap(long)]
+        max_epoch: u64,
+    },
+
+    GenerateGroth16Proof {
+        #[clap(long)]
+        jwt_token: u64,
+    },
+
+    GenerateOpenIdAuthenticatorAddress {
+        #[clap(long)]
+        verifying_key_path: PathBuf,
+    },
+
+    SerializeOpenIdAuthenticator {
+        #[clap(long)]
+        verifying_key_path: PathBuf,
+        #[clap(long)]
+        proof_points_path: PathBuf,
+        #[clap(long)]
+        public_inputs_path: PathBuf,
+        #[clap(long)]
+        user_signature: String,
+        #[clap(long)]
+        jwt_signature: String,
+        #[clap(long)]
+        masked_content: String,
     },
 }
 
@@ -276,6 +317,71 @@ impl KeyToolCommand {
                 println!("MultiSig address: {address}");
                 println!("MultiSig parsed: {:?}", generic_sig);
                 println!("MultiSig serialized: {:?}", generic_sig.encode_base64());
+            }
+
+            KeyToolCommand::LogInFlow { max_epoch } => {
+                let kp: Ed25519KeyPair = get_key_pair().1;
+                // change this to poseidon
+                let mut nonce = DefaultHash::default();
+                // split pk into two chunks
+                nonce.update(kp.public().as_bytes());
+                nonce.update(max_epoch.to_be_bytes());
+                // 31 bytes of randomness
+                nonce.update(OsRng.gen::<u32>().to_be_bytes());
+                println!("Nonce: {:?}", nonce.finalize().digest);
+            }
+
+            KeyToolCommand::GenerateGroth16Proof { jwt_token } => {
+                todo!()
+                // call js and generate:
+                // zk required inputs:
+                // vk, pk, proof
+                // public_inputs (7): jwt_sha2_hash[2], masked_content_hash, nonce, eph_public_key[2], max_epoch
+                //
+                // aux inputs: masked_content, jwt_signature
+            }
+
+            KeyToolCommand::GenerateOpenIdAuthenticatorAddress { verifying_key_path } => {
+                let vk = SerializedVerifyingKey::from_fp(verifying_key_path.to_str().unwrap());
+                println!("Sui Address: {:?}", SuiAddress::from(&vk));
+            }
+
+            KeyToolCommand::SerializeOpenIdAuthenticator {
+                verifying_key_path,
+                proof_points_path,
+                public_inputs_path,
+                masked_content,
+                jwt_signature,
+                user_signature,
+            } => {
+                // User retrieves from bulletin content and signature from smart contract. Here we hardcode for now.
+                let bulletin = vec![
+                    OAuthProviderContent {
+                        iss: "https://accounts.google.com".to_string(),
+                        kty: "RSA".to_string(),
+                        kid: "986ee9a3b7520b494df54fe32e3e5c4ca685c89d".to_string(),
+                        e: "AQAB".to_string(),
+                        n: "ofgWCuLjybRlzo0tZWJjNiuSfb4p4fAkd_wWJcyQoTbji9k0l8W26mPddxHmfHQp-Vaw-4qPCJrcS2mJPMEzP1Pt0Bm4d4QlL-yRT-SFd2lZS-pCgNMsD1W_YpRPEwOWvG6b32690r2jZ47soMZo9wGzjb_7OMg0LOL-bSf63kpaSHSXndS5z5rexMdbBYUsLA9e-KXBdQOS-UTo7WTBEMa2R2CapHg665xsmtdVMTBQY4uDZlxvb3qCo5ZwKh9kG4LT6_I5IhlJH7aGhyxXFvUK-DWNmoudF8NAco9_h9iaGNj8q2ethFkMLs91kzk2PAcDTW9gb54h4FRWyuXpoQ".to_string(),
+                        alg: "RS256".to_string(),
+                    }
+                ];
+                let bulletin_signature = Signature::from_str("AKHuIMCBpD9K/kF0HHWW0+4nZyTwc9QeHLxrjKpSqHcaJU8Gw58Gh3L8xjqZJusrA5PObjmrHVlpIwvucJiGPgYNfas1jI2tqk76AEmnWwdDZVWxCjaCGbtoD3BXE0nXdQ==").map_err(|e| anyhow!(e))?;
+
+                let authenticator = OpenIdAuthenticator {
+                    vk: SerializedVerifyingKey::from_fp(verifying_key_path.to_str().unwrap()),
+                    proof_points: ProofPoints::from_fp(proof_points_path.to_str().unwrap()),
+                    public_inputs: PublicInputs::from_fp(public_inputs_path.to_str().unwrap()),
+                    masked_content: MaskedContent::new(masked_content),
+                    jwt_signature: Base64UrlUnpadded::decode_vec(&jwt_signature).unwrap(),
+                    user_signature: Signature::from_str(&user_signature).map_err(|e| anyhow!(e))?,
+                    bulletin_signature,
+                    bulletin,
+                };
+                let sig = GenericSignature::from(authenticator);
+                println!(
+                    "OpenId Authenticator Signature Serialized: {:?}",
+                    sig.encode_base64()
+                );
             }
         }
 
