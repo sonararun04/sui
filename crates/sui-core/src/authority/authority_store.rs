@@ -1525,6 +1525,19 @@ impl ChildObjectResolver for AuthorityStore {
             None => return Ok(None),
             Some(o) => o,
         };
+
+        let child_digest = child_object.digest();
+        let prev_tx = child_object.previous_transaction;
+        let effects = self.get_executed_effects(&prev_tx).unwrap().unwrap();
+        for ((id, _, digest), owner) in effects.created().iter().chain(effects.mutated()) {
+            if id == child {
+                assert_eq!(digest, &child_digest, "Digest mismatch on {child} -> {parent}.\n\
+                                                   Owner:    {owner:?}\n\
+                                                   Expected: {child_digest}\n\
+                                                   Found:    {digest}\n");
+            }
+        }
+
         let parent = *parent;
         if child_object.owner != Owner::ObjectOwner(parent.into()) {
             return Err(SuiError::InvalidChildObjectAccess {
