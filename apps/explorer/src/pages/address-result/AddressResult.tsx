@@ -28,13 +28,14 @@ function AddressResult() {
                 </ErrorBoundary>
             </div>
 
-            
             <ErrorBoundary>
                 <div className="mt-2">
-                    <TransactionsForAddress address={addressID!} type="address"/>
+                    <TransactionsForAddress
+                        address={addressID!}
+                        type="address"
+                    />
                 </div>
             </ErrorBoundary>
-            
         </div>
     );
 }
