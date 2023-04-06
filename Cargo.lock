@@ -9217,6 +9217,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "sui-framework-snapshot"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "bcs",
+ "serde 1.0.152",
+ "serde_json",
+ "sui-framework",
+ "sui-protocol-config",
+ "sui-types",
+ "workspace-hack",
+]
+
+[[package]]
 name = "sui-framework-tests"
 version = "0.1.0"
 dependencies = [
