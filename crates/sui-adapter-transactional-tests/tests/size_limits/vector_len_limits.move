@@ -28,13 +28,13 @@ module Test::M1 {
 }
 
 // push below ven len limit should succeed
-//# run Test::M1::push_n_items --args 1 --gas-budget 100000000000000
+//# run Test::M1::push_n_items --args 1 --unmetered
 
 // push below vec len limit should succeed
-//# run Test::M1::push_n_items --args 256 --gas-budget 100000000000000
+//# run Test::M1::push_n_items --args 256 --unmetered
 
 // run at vec len limit should succeed
-//# run Test::M1::push_n_items --args 262144 --gas-budget 100000000000000
+//# run Test::M1::push_n_items --args 262144 --unmetered
 
 // run above vec len limit should fail
-//# run Test::M1::push_n_items --args 262145 --gas-budget 100000000000000
+//# run Test::M1::push_n_items --args 262145 --unmetered

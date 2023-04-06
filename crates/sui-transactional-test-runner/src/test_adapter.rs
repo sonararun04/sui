@@ -337,7 +337,7 @@ impl<'a> MoveTestAdapter<'a> for SuiTestAdapter<'a> {
             )
         };
         let transaction = self.sign_txn(sender, data);
-        let summary = self.execute_txn(transaction, gas_budget)?;
+        let summary = self.execute_txn(transaction, gas_budget, false)?;
         let created_package = summary
             .created
             .iter()
@@ -397,6 +397,7 @@ impl<'a> MoveTestAdapter<'a> for SuiTestAdapter<'a> {
             sender,
             view_events,
             view_gas_used,
+            unmetered,
         } = extra;
         let mut builder = ProgrammableTransactionBuilder::new();
         let arguments = args
@@ -423,7 +424,7 @@ impl<'a> MoveTestAdapter<'a> for SuiTestAdapter<'a> {
             )
         };
         let transaction = self.sign_txn(sender, data);
-        let summary = self.execute_txn(transaction, gas_budget)?;
+        let summary = self.execute_txn(transaction, gas_budget, unmetered)?;
         let output = self.object_summary_output(&summary, view_events, view_gas_used);
         let empty = SerializedReturnValues {
             mutable_reference_outputs: vec![],
@@ -547,7 +548,7 @@ impl<'a> MoveTestAdapter<'a> for SuiTestAdapter<'a> {
                         gas_budget,
                     )
                 });
-                let summary = self.execute_txn(transaction, gas_budget)?;
+                let summary = self.execute_txn(transaction, gas_budget, false)?;
                 let output = self.object_summary_output(&summary, false, view_gas_used);
                 Ok(output)
             }
@@ -556,7 +557,7 @@ impl<'a> MoveTestAdapter<'a> for SuiTestAdapter<'a> {
             }) => {
                 let transaction =
                     VerifiedTransaction::new_consensus_commit_prologue(0, 0, timestamp_ms);
-                let summary = self.execute_txn(transaction, DEFAULT_GAS_BUDGET)?;
+                let summary = self.execute_txn(transaction, DEFAULT_GAS_BUDGET, false)?;
                 let output = self.object_summary_output(&summary, false, false);
                 Ok(output)
             }
@@ -591,7 +592,7 @@ impl<'a> MoveTestAdapter<'a> for SuiTestAdapter<'a> {
                         gas_budget,
                     )
                 });
-                let summary = self.execute_txn(transaction, gas_budget)?;
+                let summary = self.execute_txn(transaction, gas_budget, false)?;
                 let output = self.object_summary_output(&summary, view_events, view_gas_used);
                 Ok(output)
             }
@@ -633,12 +634,25 @@ impl<'a> SuiTestAdapter<'a> {
         &mut self,
         transaction: VerifiedTransaction,
         gas_budget: u64,
+        unmetered: bool,
     ) -> anyhow::Result<TxnSummary> {
-        let gas_status = if transaction.inner().is_system_tx() {
+        let mut gas_status = if transaction.inner().is_system_tx() {
             SuiGasStatus::new_unmetered(&PROTOCOL_CONSTANTS)
         } else {
             SuiCostTable::new(&PROTOCOL_CONSTANTS).into_gas_status_for_testing(gas_budget, 1, 1)
         };
+        // Unmetered is set in the transaction run without metering. NB that this will still keep
+        // in place the normal transaction execution limits.
+        if unmetered {
+            match &mut gas_status {
+                SuiGasStatus::V1(gas_status) => {
+                    gas_status.gas_status.set_metering(false);
+                }
+                SuiGasStatus::V2(gas_status) => {
+                    gas_status.gas_status.set_metering(false);
+                }
+            }
+        }
         transaction
             .data()
             .transaction_data()

@@ -10,7 +10,7 @@ use tracing::{info, warn};
 
 /// The minimum and maximum protocol versions supported by this build.
 const MIN_PROTOCOL_VERSION: u64 = 1;
-const MAX_PROTOCOL_VERSION: u64 = 4;
+const MAX_PROTOCOL_VERSION: u64 = 5;
 
 // Record history of protocol version allocations here:
 //
@@ -20,6 +20,7 @@ const MAX_PROTOCOL_VERSION: u64 = 4;
 //            changes, enable package upgrades, add limits on `max_size_written_objects`,
 //            `max_size_written_objects_system_tx`
 // Version 4: New reward slashing rate.
+// Version 5: New gas cost table.
 
 #[derive(
     Copy, Clone, Debug, Hash, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, JsonSchema,
@@ -343,6 +344,9 @@ pub struct ProtocolConfig {
 
     /// Gas model version, what code we are using to charge gas
     gas_model_version: Option<u64>,
+
+    /// Which version of the cost table
+    gas_cost_table_version: Option<u64>,
 
     /// === Storage gas costs ===
 
@@ -771,6 +775,9 @@ impl ProtocolConfig {
     }
     pub fn gas_model_version(&self) -> u64 {
         self.gas_model_version.expect(CONSTANT_ERR_MSG)
+    }
+    pub fn gas_cost_table_version(&self) -> u64 {
+        self.gas_cost_table_version.expect(CONSTANT_ERR_MSG)
     }
     pub fn storage_rebate_rate(&self) -> u64 {
         self.storage_rebate_rate.expect(CONSTANT_ERR_MSG)
@@ -1346,6 +1353,7 @@ impl ProtocolConfig {
                 obj_data_cost_refundable: Some(100),
                 obj_metadata_cost_non_refundable: Some(50),
                 gas_model_version: Some(1),
+                gas_cost_table_version: Some(1),
                 storage_rebate_rate: Some(9900),
                 storage_fund_reinvest_rate: Some(500),
                 reward_slashing_rate: Some(5000),
@@ -1546,6 +1554,11 @@ impl ProtocolConfig {
                 let mut cfg = Self::get_for_version_impl(version - 1);
                 // Change reward slashing rate to 100%.
                 cfg.reward_slashing_rate = Some(10000);
+                cfg
+            }
+            5 => {
+                let mut cfg = Self::get_for_version_impl(version - 1);
+                cfg.gas_cost_table_version = Some(2);
                 cfg
             }
             // Use this template when making changes:

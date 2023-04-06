@@ -531,7 +531,7 @@ impl<S> TemporaryStore<S> {
 
     /// Resets any mutations, deletions, and events recorded in the store, as well as any storage costs and
     /// rebates, then Re-runs gas smashing. Effects on store are now as if we were about to begin execution
-    fn reset(&mut self, gas: &[ObjectRef], gas_status: &mut SuiGasStatus<'_>) {
+    fn reset(&mut self, gas: &[ObjectRef], gas_status: &mut SuiGasStatus) {
         self.drop_writes();
         gas_status.reset_storage_cost_and_rebate();
 
@@ -763,7 +763,7 @@ impl<S: ObjectStore> TemporaryStore<S> {
     pub fn charge_gas_legacy<T>(
         &mut self,
         gas_object_id: ObjectID,
-        gas_status: &mut SuiGasStatus<'_>,
+        gas_status: &mut SuiGasStatus,
         execution_result: &mut Result<T, ExecutionError>,
         gas: &[ObjectRef],
     ) {
@@ -855,7 +855,7 @@ impl<S: ObjectStore> TemporaryStore<S> {
     /// gas_object_id can be None if this is a system transaction.
     fn charge_gas_for_storage_changes(
         &mut self,
-        gas_status: &mut SuiGasStatus<'_>,
+        gas_status: &mut SuiGasStatus,
         gas_object_id: ObjectID,
     ) -> Result<u64, ExecutionError> {
         let mut total_bytes_written_deleted = 0;
@@ -952,7 +952,7 @@ impl<S: ObjectStore> TemporaryStore<S> {
     pub fn charge_gas<T>(
         &mut self,
         gas_object_id: Option<ObjectID>,
-        gas_status: &mut SuiGasStatus<'_>,
+        gas_status: &mut SuiGasStatus,
         execution_result: &mut Result<T, ExecutionError>,
         gas: &[ObjectRef],
     ) -> GasCostSummary {
@@ -1043,7 +1043,7 @@ impl<S: ObjectStore> TemporaryStore<S> {
     /// All objects will be updated with their new (current) storage rebate/cost.
     /// `SuiGasStatus` `storage_rebate` and `storage_gas_units` track the transaction
     /// overall storage rebate and cost.
-    fn collect_storage_and_rebate(&mut self, gas_status: &mut SuiGasStatus<'_>) {
+    fn collect_storage_and_rebate(&mut self, gas_status: &mut SuiGasStatus) {
         let mut objects_to_update = vec![];
         for (object_id, (object, write_kind)) in &mut self.written {
             // get the object storage_rebate in input for mutated objects
@@ -1091,7 +1091,7 @@ impl<S: ObjectStore> TemporaryStore<S> {
         }
     }
 
-    fn collect_rebate(&self, gas_status: &mut SuiGasStatus<'_>) {
+    fn collect_rebate(&self, gas_status: &mut SuiGasStatus) {
         for (object_id, (version, kind)) in &self.deleted {
             match kind {
                 DeleteKind::Wrap | DeleteKind::Normal => {
