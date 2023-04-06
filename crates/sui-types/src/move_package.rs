@@ -486,6 +486,19 @@ impl MovePackage {
         )
     }
 
+    pub fn deserialize_all_modules(&self) -> SuiResult<Vec<CompiledModule>> {
+        self.module_map
+            .values()
+            .map(|bytes| {
+                CompiledModule::deserialize(bytes).map_err(|error| {
+                    SuiError::ModuleDeserializationFailure {
+                        error: error.to_string(),
+                    }
+                })
+            })
+            .collect()
+    }
+
     pub fn disassemble(&self) -> SuiResult<BTreeMap<String, Value>> {
         disassemble_modules(self.module_map.values())
     }

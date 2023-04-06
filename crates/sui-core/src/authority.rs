@@ -3670,6 +3670,13 @@ pub mod framework_injection {
         });
     }
 
+    pub fn set_override_with_id(package_id: ObjectID, modules: Vec<CompiledModule>) {
+        OVERRIDE.with(|bs| {
+            bs.borrow_mut()
+                .insert(package_id, PackageOverrideConfig::Global(modules))
+        });
+    }
+
     pub fn get_bytes<S: SystemPackage>(name: AuthorityName) -> Vec<Vec<u8>> {
         OVERRIDE.with(|cfg| match cfg.borrow().get(&S::ID) {
             None => S::as_bytes(),
