@@ -2,11 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Combobox } from '@headlessui/react';
-import {
-    getObjectFields,
-    getObjectType,
-    normalizeSuiObjectId,
-} from '@mysten/sui.js';
+import { getObjectFields, getObjectType } from '@mysten/sui.js';
 import clsx from 'clsx';
 import { useState } from 'react';
 

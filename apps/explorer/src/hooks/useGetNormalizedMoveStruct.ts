@@ -6,7 +6,7 @@ import {
     normalizeSuiObjectId,
     type SuiMoveNormalizedStruct,
 } from '@mysten/sui.js';
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
 
 type GetNormalizedMoveStructOptions = {
     packageId: string;
