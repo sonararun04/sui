@@ -5,7 +5,7 @@ use anyhow::Result;
 use sui_keys::keystore::{AccountKeystore, FileBasedKeystore};
 use sui_types::{base_types::SuiAddress, crypto::SuiKeyPair};
 
-use crate::workloads::workload::MAX_BUDGET_FOR_TESTING;
+use crate::workloads::workload::MAX_BUDGET;
 use crate::ValidatorProxy;
 use std::path::PathBuf;
 use std::sync::Arc;
