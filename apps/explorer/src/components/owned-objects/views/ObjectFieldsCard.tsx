@@ -8,11 +8,12 @@ import {
     normalizeSuiObjectId,
 } from '@mysten/sui.js';
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { ReactComponent as SearchIcon } from '~/assets/SVGIcons/24px/Search.svg';
-import { getFieldTypeValue } from '~/components/ownedobjects/utils';
-import { FieldItem } from '~/components/ownedobjects/views/FieldItem';
+import { getFieldTypeValue } from '~/components/owned-objects/utils';
+import { FieldItem } from '~/components/owned-objects/views/FieldItem';
+import { ScrollViewCard } from '~/components/owned-objects/views/ScrollViewCard';
 import { useGetNormalizedMoveStruct } from '~/hooks/useGetNormalizedMoveStruct';
 import { useGetObject } from '~/hooks/useGetObject';
 import { Banner } from '~/ui/Banner';
@@ -46,6 +47,13 @@ export function ObjectFieldsCard({ id }: ObjectFieldsProps) {
         moduleName,
         functionName
     );
+
+    // Set the active field name to the first field in the struct on load
+    useEffect(() => {
+        if (normalizedStruct?.fields && activeFieldName === '') {
+            setActiveFieldName(normalizedStruct.fields[0].name);
+        }
+    }, [activeFieldName, normalizedStruct?.fields]);
 
     if (isLoading || loadingNormalizedStruct) {
         return (
@@ -193,7 +201,12 @@ export function ObjectFieldsCard({ id }: ObjectFieldsProps) {
                                 <div className="flex max-h-[600px] flex-col gap-5 overflow-x-scroll pb-5">
                                     {normalizedStruct?.fields.map(
                                         ({ name, type }) => (
-                                            <div key={name}>
+                                            <ScrollViewCard
+                                                key={name}
+                                                strollTo={
+                                                    name === activeFieldName
+                                                }
+                                            >
                                                 <DisclosureBox
                                                     title={
                                                         <div className="min-w-fit max-w-[60%] truncate break-words text-body font-medium leading-relaxed text-steel-dark">
@@ -232,7 +245,7 @@ export function ObjectFieldsCard({ id }: ObjectFieldsProps) {
                                                         type={type}
                                                     />
                                                 </DisclosureBox>
-                                            </div>
+                                            </ScrollViewCard>
                                         )
                                     )}
                                 </div>

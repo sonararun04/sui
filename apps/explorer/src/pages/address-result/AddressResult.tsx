@@ -4,7 +4,7 @@
 import { useParams } from 'react-router-dom';
 
 import { ErrorBoundary } from '../../components/error-boundary/ErrorBoundary';
-import OwnedObjects from '../../components/ownedobjects/OwnedObjects';
+import OwnedObjects from '../../components/owned-objects/OwnedObjects';
 import { TransactionsForAddress } from '../../components/transactions/TransactionsForAddress';
 
 import { Heading } from '~/ui/Heading';
