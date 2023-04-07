@@ -1853,7 +1853,7 @@ pub fn default_db_options() -> DBOptions {
     // https://github.com/facebook/rocksdb/blob/11cb6af6e5009c51794641905ca40ce5beec7fee/options/options.cc#L611-L621
     let mut block_options = BlockBasedOptions::default();
     // Configure a 64MiB block cache.
-    block_options.set_block_cache(&Cache::new_lru_cache(512 << 20).unwrap());
+    block_options.set_block_cache(&Cache::new_lru_cache(64 << 20).unwrap());
     // Set a bloomfilter with 1% false positive rate.
     block_options.set_bloom_filter(10.0, false);
 
