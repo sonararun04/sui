@@ -25,7 +25,9 @@ use sui_json_rpc_types::{SuiExecutionStatus, SuiTransactionBlockResponseOptions}
 use sui_sdk::{rpc_types::SuiTransactionBlockEffectsAPI, SuiClient, SuiClientBuilder};
 use sui_types::base_types::{ObjectRef, SuiAddress};
 use sui_types::crypto::{generate_proof_of_possession, get_key_pair, SuiKeyPair};
-use sui_types::messages::{CallArg, ObjectArg, Transaction, TransactionData};
+use sui_types::messages::{
+    CallArg, ObjectArg, Transaction, TransactionData, TEST_ONLY_GAS_UNIT_FOR_GENERIC,
+};
 use sui_types::multiaddr::{Multiaddr, Protocol};
 use sui_types::{committee::EpochId, crypto::get_authority_key_pair};
 use sui_types::{SUI_SYSTEM_STATE_OBJECT_ID, SUI_SYSTEM_STATE_OBJECT_SHARED_VERSION};
@@ -307,6 +309,10 @@ async fn update_metadata_on_chain(
     sui_client: &SuiClient,
 ) -> anyhow::Result<()> {
     let gas_obj_ref = get_gas_obj_ref(sui_address, sui_client, 10000 * 100).await?;
+    let rgp = sui_client
+        .governance_api()
+        .get_reference_gas_price()
+        .await?;
     let mut args = vec![CallArg::Object(ObjectArg::SharedObject {
         id: SUI_SYSTEM_STATE_OBJECT_ID,
         initial_shared_version: SUI_SYSTEM_STATE_OBJECT_SHARED_VERSION,
@@ -321,8 +327,8 @@ async fn update_metadata_on_chain(
         vec![],
         gas_obj_ref,
         args,
-        5000,
-        1,
+        rgp * TEST_ONLY_GAS_UNIT_FOR_GENERIC,
+        rgp,
     )
     .unwrap();
     execute_tx(config, sui_client, tx_data, function).await?;

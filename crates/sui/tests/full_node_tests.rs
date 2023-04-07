@@ -562,7 +562,7 @@ async fn test_full_node_sub_and_query_move_event_ok() -> Result<(), anyhow::Erro
     let ws_client = fullnode.ws_client;
 
     let context = &mut test_cluster.wallet;
-    let package_id = publish_nfts_package(context, /* sender */ None).await.0;
+    let package_id = publish_nfts_package(context).await.0;
 
     let struct_tag_str = format!("{package_id}::devnet_nft::MintNFTEvent");
     let struct_tag = parse_struct_tag(&struct_tag_str).unwrap();
@@ -660,7 +660,7 @@ async fn test_full_node_event_read_api_ok() {
     let node = &test_cluster.fullnode_handle.sui_node;
     let jsonrpc_client = &test_cluster.fullnode_handle.rpc_client;
 
-    let package_id = publish_nfts_package(context, /* sender */ None).await.0;
+    let (package_id, gas_id_1, _, _) = publish_nfts_package(context).await;
 
     let (transferred_object, _, _, digest, _, _) = transfer_coin(context).await.unwrap();
 
@@ -676,8 +676,13 @@ async fn test_full_node_event_read_api_ok() {
         )
         .unwrap();
 
-    assert_eq!(txes.len(), 1);
-    assert_eq!(txes[0], digest);
+    if gas_id_1 == transferred_object {
+        assert_eq!(txes.len(), 2);
+        assert!(txes[0] == digest || txes[1] == digest);
+    } else {
+        assert_eq!(txes.len(), 1);
+        assert_eq!(txes[0], digest);
+    }
 
     // timestamp is recorded
     let ts = node.state().get_timestamp_ms(&digest).await.unwrap();
@@ -938,9 +943,10 @@ async fn get_past_obj_read_from_node(
 async fn test_get_objects_read() -> Result<(), anyhow::Error> {
     telemetry_subscribers::init_for_testing();
     let mut test_cluster = TestClusterBuilder::new().build().await?;
+    let rgp = test_cluster.get_reference_gas_price().await;
     let node = test_cluster.fullnode_handle.sui_node.clone();
     let context = &mut test_cluster.wallet;
-    let package_id = publish_nfts_package(context, /* sender */ None).await.0;
+    let package_id = publish_nfts_package(context).await.0;
 
     // Create the object
     let (sender, object_id, _) = create_devnet_nft(context, package_id).await?;
@@ -961,6 +967,7 @@ async fn test_get_objects_read() -> Result<(), anyhow::Error> {
         context,
         sender,
         recipient,
+        rgp,
     );
     context
         .execute_transaction_block(nft_transfer_tx)

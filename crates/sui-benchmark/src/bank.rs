@@ -14,9 +14,7 @@ use std::sync::Arc;
 use sui_types::base_types::{ObjectRef, SuiAddress};
 use sui_types::crypto::AccountKeyPair;
 use sui_types::gas_coin::GAS;
-use sui_types::messages::{
-    CallArg, ObjectArg, TransactionData, VerifiedTransaction, DUMMY_GAS_PRICE,
-};
+use sui_types::messages::{CallArg, ObjectArg, TransactionData, VerifiedTransaction};
 use sui_types::utils::to_sender_signed_transaction;
 use sui_types::{coin, SUI_FRAMEWORK_OBJECT_ID};
 
@@ -100,13 +98,13 @@ impl BenchmarkBank {
         }
         Ok(workloads)
     }
+
     fn make_split_coin_tx(
         &self,
         split_amounts: Vec<u64>,
-        gas_price: Option<u64>,
+        gas_price: u64,
         keypair: &AccountKeyPair,
     ) -> Result<VerifiedTransaction> {
-        let gas_price = gas_price.unwrap_or(DUMMY_GAS_PRICE);
         let split_coin = TransactionData::new_move_call(
             self.primary_gas.1,
             SUI_FRAMEWORK_OBJECT_ID,
@@ -135,7 +133,7 @@ impl BenchmarkBank {
         // we can do both in one tx with pay_sui which will split the coin out for us before
         // transferring it to recipients
         let verified_tx =
-            self.make_split_coin_tx(split_amounts.clone(), Some(gas_price), &self.primary_gas.2)?;
+            self.make_split_coin_tx(split_amounts.clone(), gas_price, &self.primary_gas.2)?;
         let effects = self
             .proxy
             .execute_transaction_block(verified_tx.into())
@@ -162,7 +160,7 @@ impl BenchmarkBank {
             split_amounts,
             updated_gas.0,
             &self.primary_gas.2,
-            Some(gas_price),
+            gas_price,
         )?;
         let effects = self
             .proxy

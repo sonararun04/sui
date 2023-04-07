@@ -272,8 +272,8 @@ pub mod pg_integration_test {
         let (mut test_cluster, indexer_rpc_client, store, _handle) = start_test_cluster(None).await;
         // Allow indexer to sync genesis
         wait_until_next_checkpoint(&store).await;
-        let (package_id, publish_digest) =
-            publish_nfts_package(&mut test_cluster.wallet, /* sender */ None).await;
+        let (package_id, _, _, publish_digest) =
+            publish_nfts_package(&mut test_cluster.wallet).await;
         wait_until_transaction_synced(&store, publish_digest.base58_encode().as_str()).await;
         wait_until_next_checkpoint(&store).await;
 
@@ -415,8 +415,8 @@ pub mod pg_integration_test {
         let (mut test_cluster, indexer_rpc_client, store, _handle) = start_test_cluster(None).await;
         // Allow indexer to sync genesis
         wait_until_next_checkpoint(&store).await;
-        let (package_id, publish_digest) =
-            publish_nfts_package(&mut test_cluster.wallet, /* sender */ None).await;
+        let (package_id, _, _, publish_digest) =
+            publish_nfts_package(&mut test_cluster.wallet).await;
         wait_until_transaction_synced(&store, publish_digest.base58_encode().as_str()).await;
         let (tx_response, _, _, _) =
             execute_simple_transfer(&mut test_cluster, &indexer_rpc_client).await?;
@@ -456,7 +456,7 @@ pub mod pg_integration_test {
         wait_until_next_checkpoint(&store).await;
         let nft_creator = test_cluster.get_address_0();
         let context = &mut test_cluster.wallet;
-        let (package_id, publish_digest) = publish_nfts_package(context, /* sender */ None).await;
+        let (package_id, _, _, publish_digest) = publish_nfts_package(context).await;
         wait_until_transaction_synced(&store, publish_digest.base58_encode().as_str()).await;
 
         let (_, _, digest_one) = create_devnet_nft(context, package_id).await.unwrap();
@@ -533,7 +533,7 @@ pub mod pg_integration_test {
         // Allow indexer to sync genesis
         wait_until_next_checkpoint(&store).await;
         let context = &mut test_cluster.wallet;
-        let (package_id, publish_digest) = publish_nfts_package(context, /* sender */ None).await;
+        let (package_id, _, _, publish_digest) = publish_nfts_package(context).await;
         wait_until_transaction_synced(&store, publish_digest.base58_encode().as_str()).await;
 
         for _ in 0..5 {
