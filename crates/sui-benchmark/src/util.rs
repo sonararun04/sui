@@ -7,6 +7,7 @@ use sui_types::{base_types::SuiAddress, crypto::SuiKeyPair};
 
 use crate::workloads::workload::MAX_BUDGET;
 use crate::ValidatorProxy;
+use std::cmp::min;
 use std::path::PathBuf;
 use std::sync::Arc;
 use sui_types::base_types::ObjectRef;
@@ -52,7 +53,7 @@ pub fn make_pay_tx(
         addresses,
         split_amounts,
         gas,
-        TEST_ONLY_GAS_UNIT_FOR_TRANSFER * gas_price,
+        min(MAX_BUDGET, TEST_ONLY_GAS_UNIT_FOR_TRANSFER * gas_price),
         gas_price,
     )?;
     Ok(to_sender_signed_transaction(pay, keypair))
@@ -72,7 +73,7 @@ pub async fn publish_basics_package(
         path,
         sender,
         keypair,
-        gas_price * TEST_ONLY_GAS_UNIT_FOR_PUBLISH,
+        min(MAX_BUDGET, gas_price * TEST_ONLY_GAS_UNIT_FOR_PUBLISH),
         gas_price,
     );
     let effects = proxy
