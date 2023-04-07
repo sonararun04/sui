@@ -8,7 +8,7 @@ import {
     normalizeSuiObjectId,
 } from '@mysten/sui.js';
 import clsx from 'clsx';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 import { ReactComponent as SearchIcon } from '~/assets/SVGIcons/24px/Search.svg';
 import { getFieldTypeValue } from '~/components/owned-objects/utils';
@@ -42,18 +42,12 @@ export function ObjectFieldsCard({ id }: ObjectFieldsProps) {
         data: normalizedStruct,
         isLoading: loadingNormalizedStruct,
         isError: errorNormalizedMoveStruct,
+        isSuccess,
     } = useGetNormalizedMoveStruct(
         normalizeSuiObjectId(packageId),
         moduleName,
         functionName
     );
-
-    // Set the active field name to the first field in the struct on load
-    useEffect(() => {
-        if (normalizedStruct?.fields && activeFieldName === '') {
-            setActiveFieldName(normalizedStruct.fields[0].name);
-        }
-    }, [activeFieldName, normalizedStruct?.fields]);
 
     if (isLoading || loadingNormalizedStruct) {
         return (
@@ -68,6 +62,13 @@ export function ObjectFieldsCard({ id }: ObjectFieldsProps) {
                 Failed to get field data for :{id}
             </Banner>
         );
+    }
+
+    // Set the active field name to the first field in the struct on load
+    if (isSuccess) {
+        if (normalizedStruct?.fields && activeFieldName === '') {
+            setActiveFieldName(normalizedStruct.fields[0].name);
+        }
     }
 
     const fieldsData = getObjectFields(data!);
