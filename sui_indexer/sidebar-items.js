@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["build_json_rpc_server","get_async_pg_pool_connection","get_pg_pool_connection","new_pg_connection_pool","new_rpc_client"],"mod":["apis","errors","metrics","models","processors","schema","store","test_utils","types","utils"],"struct":["Indexer","IndexerConfig"],"type":["AsyncPgConnectionPool","PgConnectionPool","PgPoolConnection"]};

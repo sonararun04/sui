@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["MAX_GET_OWNED_OBJECT_SIZE","MAX_TX_RANGE_SIZE"],"struct":["IndexStore","IndexStoreTables","IndexStoreTablesConfigurator","IndexStoreTablesReadOnly","ObjectIndexChanges"]};

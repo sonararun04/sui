@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["adversarial","batch_payment","delegation","payload","shared_counter","transfer_object","workload","workload_configuration"],"struct":["GasCoinConfig","WorkloadBuilderInfo","WorkloadInfo","WorkloadParams"],"type":["Gas"]};

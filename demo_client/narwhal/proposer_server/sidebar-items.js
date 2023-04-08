@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["NodeReadCausalSvc","ProposerServer","RoundsSvc","_Inner"],"trait":["Proposer"]};

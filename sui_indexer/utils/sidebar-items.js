@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["drop_all_tables","get_balance_changes_from_effect","get_object_changes","multi_get_full_transactions","reset_database"]};

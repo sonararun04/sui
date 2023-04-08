@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["FakeID"],"fn":["clone_genesis_compiled_modules","clone_genesis_objects","clone_genesis_packages"],"struct":["SuiTestAdapter"]};

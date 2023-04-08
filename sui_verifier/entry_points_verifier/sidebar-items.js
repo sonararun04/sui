@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["RESOLVED_ASCII_STR","RESOLVED_STD_OPTION","RESOLVED_SUI_CLOCK","RESOLVED_SUI_ID","RESOLVED_UTF8_STR"],"enum":["TxContextKind"],"fn":["is_mutable_clock","is_object","is_object_vector","is_primitive","is_tx_context","verify_module"]};

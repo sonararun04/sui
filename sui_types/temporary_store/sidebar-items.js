@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["empty_for_testing","with_input_objects_for_testing"],"struct":["InnerTemporaryStore","TemporaryModuleResolver","TemporaryStore"]};

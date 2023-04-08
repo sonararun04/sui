@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["SendCertificateSvc","WorkerToPrimaryServer","_Inner"],"trait":["WorkerToPrimary"]};

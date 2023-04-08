@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["CheckpointData","PgIndexerStore","TemporaryCheckpointStore","TemporaryEpochStore","TransactionObjectChanges"],"trait":["IndexerStore"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["AsProtocolVersion","BigInt","HexAccountAddress","Readable","SequenceNumber","SuiBitmap","SuiStructTag","SuiTypeTag"]};

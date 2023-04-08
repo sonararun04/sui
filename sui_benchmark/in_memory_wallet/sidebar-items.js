@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["move_call_pt_impl"],"struct":["InMemoryWallet","SuiAccount"]};

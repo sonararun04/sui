@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["MetadataUpdate","SuiValidatorCommand","SuiValidatorCommandResponse","ValidatorStatus"],"fn":["write_transaction_response"]};

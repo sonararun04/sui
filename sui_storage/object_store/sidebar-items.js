@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ObjectStoreType"],"mod":["util"],"struct":["ObjectStoreConfig"]};

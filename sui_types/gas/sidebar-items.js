@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["SuiCostTable","SuiGasStatus"],"fn":["deduct_gas","deduct_gas_legacy","get_gas_balance","refund_gas"],"struct":["GasCostSummary"],"trait":["SuiGasStatusAPI"]};

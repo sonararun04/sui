@@ -1,0 +1,3 @@
+(function() {var implementors = {
+"sui_adapter":[["impl&lt;'d&gt; <a class=\"trait\" href=\"https://docs.rs/serde/1.0.152/serde/de/trait.DeserializeSeed.html\" title=\"trait serde::de::DeserializeSeed\">DeserializeSeed</a>&lt;'d&gt; for &amp;<a class=\"enum\" href=\"sui_adapter/programmable_transactions/execution/enum.PrimitiveArgumentLayout.html\" title=\"enum sui_adapter::programmable_transactions::execution::PrimitiveArgumentLayout\">PrimitiveArgumentLayout</a>"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

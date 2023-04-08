@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["natives_tables","tier_based"]};

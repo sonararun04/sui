@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["CertificateDigest","CheckpointContentsDigest","CheckpointDigest","Digest","ObjectDigest","SenderSignedDataDigest","TransactionDigest","TransactionEffectsDigest","TransactionEventsDigest"]};

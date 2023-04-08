@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["handle_lint_results_exclude_external_crate_checks","run"],"static":["IGNORE_DIR","LICENSE_HEADER"],"struct":["Args"]};

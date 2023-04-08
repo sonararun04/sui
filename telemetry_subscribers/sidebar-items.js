@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["init_for_testing"],"mod":["span_latency_prom"],"struct":["FilterHandle","TelemetryConfig","TelemetryGuards"],"type":["BoxError"]};

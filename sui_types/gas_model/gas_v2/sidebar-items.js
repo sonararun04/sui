@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["deduct_gas","get_gas_balance"],"struct":["SuiCostTable","SuiGasStatus"]};

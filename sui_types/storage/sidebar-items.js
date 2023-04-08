@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["DeleteKind","ObjectChange","WriteKind"],"fn":["get_module","get_module_by_id","transaction_input_object_keys"],"struct":["InMemoryStore","ObjectKey","SharedInMemoryStore"],"trait":["BackingPackageStore","ChildObjectResolver","ObjectStore","ParentSync","ReadStore","Storage","WriteStore"],"type":["PackageFetchResults"]};

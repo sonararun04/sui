@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["account_address","first_appearance_time","first_appearance_tx","star"]};

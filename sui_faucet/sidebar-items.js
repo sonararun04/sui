@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["FaucetError","FaucetRequest"],"mod":["metrics_layer"],"struct":["CoinInfo","FaucetConfig","FaucetReceipt","FaucetResponse","FixedAmountRequest","SimpleFaucet"],"trait":["Faucet"]};

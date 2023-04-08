@@ -1,0 +1,4 @@
+(function() {var implementors = {
+"sui_adapter":[["impl&lt;'state, S: <a class=\"trait\" href=\"sui_adapter/programmable_transactions/types/trait.StorageView.html\" title=\"trait sui_adapter::programmable_transactions::types::StorageView\">StorageView</a>&gt; ResourceResolver for <a class=\"struct\" href=\"sui_adapter/programmable_transactions/linkage_view/struct.LinkageView.html\" title=\"struct sui_adapter::programmable_transactions::linkage_view::LinkageView\">LinkageView</a>&lt;'state, S&gt;"]],
+"sui_types":[["impl&lt;S&gt; ResourceResolver for <a class=\"struct\" href=\"sui_types/temporary_store/struct.TemporaryStore.html\" title=\"struct sui_types::temporary_store::TemporaryStore\">TemporaryStore</a>&lt;S&gt;"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

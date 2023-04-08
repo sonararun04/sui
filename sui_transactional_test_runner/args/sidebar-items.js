@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["SUI_ARGS_LONG"],"enum":["SuiExtraValueArgs","SuiSubcommand","SuiValue"],"struct":["ConsensusCommitPrologueCommand","ProgrammableTransactionCommand","SuiInitArgs","SuiPublishArgs","SuiRunArgs","TransferObjectCommand","ViewObjectCommand"]};

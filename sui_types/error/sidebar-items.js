@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["TRANSACTIONS_NOT_FOUND_MSG_PREFIX","TRANSACTION_NOT_FOUND_MSG_PREFIX"],"enum":["SuiError","SuiObjectResponseError","UserInputError","VMMVerifierErrorSubStatusCode","VMMemoryLimitExceededSubStatusCode"],"fn":["convert_vm_error"],"struct":["ExecutionError","MoveVM"],"type":["ExecutionErrorKind","SuiResult","UserInputResult"]};
