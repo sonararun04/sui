@@ -128,7 +128,7 @@ impl JsonRpcServerBuilder {
                     .tap_err(|e| warn!("Cannot parse RPC_MAX_CONNECTION to u32: {e}"))
                     .ok()
             })
-            .unwrap_or(u32::MAX);
+            .unwrap_or(200);
 
         let metrics_logger = MetricsLogger::new(&self.registry, &methods_names);
 
